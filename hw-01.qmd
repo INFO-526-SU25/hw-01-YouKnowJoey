@@ -1,7 +1,7 @@
 ---
 title: "HW 01"
-author: "INSERT YOUR NAME HERE"
-format: 
+author: "Joey Garcia"
+format: html
   html:
     embed-resources: true
 toc: true
@@ -17,11 +17,78 @@ if (!require("pacman"))
 # pacman::p_load() 
 
 devtools::install_github("tidyverse/dsbox")
+
+library('tidyverse')
+library('lubridate')
+library('glue')
+library('scales')
+library('dplyr')
+library('ggthemes')
+
+# set theme for ggplot2
+ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
+
+# set width of code output
+options(width = 65)
+
+# set figure parameters for knitr
+knitr::opts_chunk$set(
+  fig.width = 7,        # 7" width
+  fig.asp = 0.618,      # the golden ratio
+  fig.retina = 3,       # dpi multiplier for displaying HTML output on retina
+  fig.align = "center", # center align figures
+  dpi = 300             # higher dpi, sharper image
+)
+
 ```
 
 ## 1 - Road traffic accidents in Edinburgh
 
-```{r label-me-1}
+```{r Traffic accidents import and data glimpse}
+
+accidents <- read.csv("data/accidents.csv")
+
+glimpse(accidents)
+
+unique(accidents$day_of_week)
+unique(accidents$severity)
+
+
+```
+
+
+```{r Accidents thoughout a day "density plot"}
+
+# Identify weekends and weekday & convert time into numerical values
+accidents <- accidents |>
+  mutate(
+    # Identify Weekends
+    in_weekend = case_when(
+      day_of_week %in% c('Saturday', 'Sunday') ~ 1,
+      TRUE ~ 0
+    ),
+    day_type = if_else(in_weekend == 1, "Weekend", "Weekday"), 
+    
+    # Convert time into a numerical value for density plot
+    time_parsed = parse_date_time(time, orders = 'HMS'), # parse by Hour:Min:Sec
+    time_decimal = hour(time_parsed) + minute(time_parsed) / 60 + second(time_parsed) / 3600
+  )
+
+# Density plot of accident severity throughout a day
+accidents |>
+  ggplot(aes(x=time_decimal, fill = severity)) +
+  geom_density(alpha= 0.6) +
+  facet_wrap(~day_type, ncol = 1) +
+  scale_x_continuous(breaks = seq(0, 24, by = 2)) +
+  scale_color_colorblind() +
+  labs(
+    x = "Time of day (Hours)",
+    y = "Density",
+    color = NULL, linetype = NULL,
+    title = "Number of accidents throughout the day",
+    subtitle = "By day of week and severity"
+    ) +
+  theme_minimal()
 
 ```
 
@@ -33,6 +100,19 @@ devtools::install_github("tidyverse/dsbox")
 
 ## 3 - US counties
 
+```{r label-me-2}
+
+```
+
 ## 4 - Rental apartments in SF
 
+```{r label-me-2}
+
+```
+
 ## 5 - Napoleon’s march.
+
+```{r label-me-2}
+
+```
+
