@@ -94,7 +94,98 @@ accidents |>
 
 ## 2 - NYC marathon winners
 
-```{r label-me-2}
+```{r NYC Marthon winner import and data wrangling}
+
+marathon <- read.csv('data/nyc_marathon.csv')
+glimpse(marathon)
+
+sum(is.na(marathon$time)) # counts NA rows
+
+marathon <- marathon |>
+  drop_na(time_hrs, )
+glimpse(marathon)
+
+summary(marathon)
+
+```
+
+### (A)
+In the histogram, it's apparent that there are 2 major inflection points in the dataset, this difference us what separates the times between the Men and Women divisions. In the boxplot, we are able to see the median value and outliers of the dataset. 
+
+```{r NYC Marthon winner histogram & boxplot}
+
+
+
+marathon |>
+  ggplot(aes(x=time_hrs)) +
+  geom_histogram(binwidth = 0.1, fill='cornsilk2') +
+  labs(
+    x= 'Finish Time (Hours)', 
+    y= 'Count',
+    title = 'Marathon Finish Times', 
+    subtitle = 'Histogram of all divisions'
+  ) +
+  theme_minimal()
+
+marathon |>
+  ggplot(aes(y=time_hrs)) +
+  geom_boxplot(alpha=0.6, fill='skyblue') +
+  labs(
+    y= 'Finish Time (Hours)',
+    title = 'Marathon Finish Times', 
+    subtitle = 'Boxplot of all divisions'
+  ) +
+  theme_minimal()
+
+```
+
+### (B)
+When comparing the Men and Women divisions, we can see that the medians of the boxplots are more distinct. There is less variation of time in each boxplot as well. The Men division has a faster average marathon time than the woman division. 
+
+```{r NYC Marthon winner boxplot of Men and Women Divisions}
+
+marathon |>
+  ggplot(aes(y=time_hrs, fill = division)) +
+  geom_boxplot(alpha=0.6) +
+  facet_wrap(~ division) +
+  scale_fill_manual(values = c("Men" = "skyblue", "Women" = "cornsilk4")) +
+  labs(
+    y= 'Finish Time (Hours)',
+    title = 'Marathon Finish Times', 
+    subtitle = 'Boxplots of Men and Women division', 
+    fill = 'Division'
+  ) +
+  theme_minimal()
+
+```
+### (C)
+In themes, we are able to remove the legend and the x axis markers. The legend is removed because the boxplot title is more than sufficient for clearly representing the boxplot. The x-axis doesn't have graphical significance in portraying our message of the boxplot. 
+
+```{r NYC Marthon winner boxplot of Men and Women Divisions (improved data:ink ratio)}
+
+marathon |>
+  ggplot(aes(y=time_hrs, fill = division)) +
+  geom_boxplot(alpha=0.6) +
+  facet_wrap(~ division) +
+  scale_fill_manual(values = c("Men" = "skyblue", "Women" = "cornsilk4")) +
+  labs(
+    y= 'Finish Time (Hours)',
+    title = 'Marathon Finish Times', 
+    subtitle = 'Boxplots of Men and Women division', 
+    fill = 'Division'
+  ) +
+  theme_minimal() + 
+  theme(
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )
+
+```
+
+### (D)
+```{r Time Series Marathon Finish Times}
 
 ```
 
