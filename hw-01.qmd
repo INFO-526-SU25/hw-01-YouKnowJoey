@@ -2,9 +2,6 @@
 title: "HW 01"
 author: "Joey Garcia"
 format: html
-  html:
-    embed-resources: true
-toc: true
 ---
 
 ## 0 - Setup
@@ -16,6 +13,9 @@ if (!require("pacman"))
 # use this line for installing/loading
 # pacman::p_load() 
 
+if (!require(gridExtra)) {install.packages("gridExtra"); require(gridExtra)}
+    library(gridExtra)
+
 devtools::install_github("tidyverse/dsbox")
 
 library('tidyverse')
@@ -24,6 +24,9 @@ library('glue')
 library('scales')
 library('dplyr')
 library('ggthemes')
+
+library('ggrepel')
+library('gridExtra')
 
 library('openintro')
 
@@ -58,7 +61,7 @@ unique(accidents$severity)
 
 ```
 
-```{r Accidents thoughout a day "density plot"}
+```{r Accidents-density-plot}
 
 # Identify weekends and weekday & convert time into numerical values
 accidents <- accidents |>
@@ -225,12 +228,11 @@ glimpse(county)
 summary(county)
 ```
 
-
 ### (A)
 
-The below code works, but it does a poor job of explaining how the response "median_hh_income" relates to the variable "median_edu". The code adds the box plot and extends the x axis variables, thus not raising conflicts between the two plots. The y-axis is significantly stretched because the maximum values of pop2017 (max = 10163507) is greater than median_hh_income (max = 129588). All in all, the code works but the graph does not make sense.  
+The below code works, but it does a poor job of explaining how the response "median_hh_income" relates to the variable "median_edu". The code adds the box plot and extends the x axis variables, thus not raising conflicts between the two plots. The y-axis is significantly stretched because the maximum values of pop2017 (max = 10163507) is greater than median_hh_income (max = 129588). All in all, the code works but the graph does not make sense.
 
-``` {r Test randomly concstructed graph}
+```{r Test randomly concstructed graph}
 
 ggplot(county) +
   geom_point(aes(x = median_edu, y = median_hh_income)) +
@@ -239,15 +241,16 @@ ggplot(county) +
 ```
 
 ### (B)
+
 Of the two figures below, the plot that best compares poverty levels to different median education levels is the 2nd figure. In the 2nd figure, we are able to distinguish the higher poverty levels per education level. Our choice is critical when picking how we want to facet our graphs. When faceting this will stretch our graphs in directions that may obscure our data, this inherently change how our graph's message is perceived.
 
-``` {r figure-1}
+```{r figure-1}
 ggplot(county %>% filter(!is.na(median_edu))) + 
   geom_point(aes(x = homeownership, y = poverty)) + 
   facet_grid(median_edu ~ .)
 ```
 
-``` {r figure 2}
+```{r figure 2}
 ggplot(county %>% filter(!is.na(median_edu))) + 
   geom_point(aes(x = homeownership, y = poverty)) + 
   facet_grid(. ~ median_edu)
@@ -287,7 +290,6 @@ county |>
   theme_minimal() +
   theme(legend.position = "none")
 ```
-
 
 ```{r Plot D}
 county |>
@@ -339,7 +341,6 @@ county |>
   theme_minimal()
 ```
 
-
 ```{r Plot H}
 county |>
   ggplot(aes(x= homeownership, y= poverty)) +
@@ -360,9 +361,9 @@ summary(credit)
 
 ### (A)
 
-In all instances, if the person married or a student, there is a positive trend across all plots. The positive trends indicates the higher the income then the higher the credit card balance. 
+In all instances, if the person married or a student, there is a positive trend across all plots. The positive trends indicates the higher the income then the higher the credit card balance.
 
-Separately, it would be interesting to see the usage percentage based on the credit cards limit. I think this would tell a better story about debt availability and usage of married students and non-married non-students. 
+Separately, it would be interesting to see the usage percentage based on the credit cards limit. I think this would tell a better story about debt availability and usage of married students and non-married non-students.
 
 ```{r Credit Card vs. Income Plots}
 
@@ -399,11 +400,11 @@ credit |>
 
 ### (B)
 
-Based on the plot, the predictors 'income', 'marriage', and 'student' are not strong predictors (when together) for figuring out the credit 'balance'. The trends are very similar, the y-intercepts are unique in their subplots, but they generally have the same linear regression line. 
+Based on the plot, the predictors 'income', 'marriage', and 'student' are not strong predictors (when together) for figuring out the credit 'balance'. The trends are very similar, the y-intercepts are unique in their subplots, but they generally have the same linear regression line.
 
 Based on the statistical summary below, we can see that the 'student' predictor shows statistical significance with a very small p value less the 0.05. The 'married' predictor has a p-value of 0.948 which indicates that it's statistically less significant. 'student' is a useful predictor.
 
-``` {r stats summary of credit.csv}
+```{r stats summary of credit.csv}
 
 model_income <- lm(balance ~ income, data = credit)
 summary(model_income)
@@ -414,6 +415,7 @@ anova(model_income, model_full)
 ```
 
 ### (C)
+
 ```{r Credit Utilization vs. Income}
 
 # Data Wrangling
@@ -456,16 +458,87 @@ credit |>
 
 ### (D)
 
-Based on the plot from part (c), we see higher y-intercepts for credit card utilization of students('yes'). Another noticeable change, students that are married and non-married show a negative trend. This indicates that credit card utilization decreases as income increases for students. 
-
+Based on the plot from part (c), we see higher y-intercepts for credit card utilization of students('yes'). Another noticeable change, students that are married and non-married show a negative trend. This indicates that credit card utilization decreases as income increases for students.
 
 ## 5 - Napoleon’s march.
 
-```{r My Unique Napoleon’s march}
+```{r My Unique Napoleon’s march import}
+
+napoleon <- read_rds('data/napoleon.rds')
+glimpse(napoleon)
 
 ```
 
+```{r My Unique Napoleon’s march}
+### Note: add directional shapes to indicate ingress and egress  
+
+
+breaks <- c(100000, 200000, 300000) # Set scale breaks for 'survivor' var
+
+# Plot Troop movements
+plot_troops <- napoleon$troops |>
+  ggplot(aes(x= long, y= lat)) +
+  # Plot Path of troops
+  geom_path(
+    aes(size = survivors, colour = direction, group = group),
+    lineend="round"
+  ) +
+  # Scale plot
+  scale_size(
+    name= "Survivors",
+    range = c(0.5,5), #scales 'survivors' path; adjust for legend readability
+    breaks=breaks,
+    labels=comma(breaks) # from scales library
+  ) +
+  # Add color to Troops by 'direction'
+  scale_color_manual(
+    name= "Direction", 
+    values = c("cornsilk3", "black"),
+    labels=c("Advance", "Retreat")
+  ) +
+  guides(
+    size = guide_legend(order = 2),
+    colour = guide_legend(order = 1)
+  ) +
+  theme_minimal()
+
+
+# Plot City names and points over Troops path
+plot_troops_cities <- plot_troops +
+  geom_point(
+    data = napoleon$cities
+  ) +
+  geom_text_repel(
+    data = napoleon$cities, 
+    aes(label = city)
+  ) +
+  theme_minimal()
+
+
+# Plot Temperature path plot
+plot_temp <- napoleon$temperatures |>
+  # create 
+  mutate(
+    label = paste0(temp, "° ", date)
+  ) |>
+  ggplot(aes(long, temp)) +
+  geom_path(color="grey", linewidth=1.5) +
+  geom_point(size=1) + 
+  geom_text_repel(
+    aes(label=label),
+    size=2.5
+  ) +
+  theme_minimal()
+
+# Combine the above plots
+grid.arrange(plot_troops_cities, plot_temp, nrow = 2)
+
+```
 
 ### Citation List
+
+-   https://github.com/shakir-flash/Napoleons-March-Minard-Visualization
+
+This version of Napoleons March is 2 years old. The majority of the framework was received from this repository. Rather than copy/pasting the code, I used my own coding style to breakdown the plots. 
 
 
