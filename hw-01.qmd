@@ -56,7 +56,6 @@ unique(accidents$severity)
 
 ```
 
-
 ```{r Accidents thoughout a day "density plot"}
 
 # Identify weekends and weekday & convert time into numerical values
@@ -110,9 +109,10 @@ summary(marathon)
 ```
 
 ### (A)
-In the histogram, it's apparent that there are 2 major inflection points in the dataset, this difference us what separates the times between the Men and Women divisions. In the boxplot, we are able to see the median value and outliers of the dataset. 
 
-```{r NYC Marthon winner histogram & boxplot}
+In the histogram, it's apparent that there are 2 major inflection points in the dataset, this difference us what separates the times between the Men and Women divisions. In the boxplot, we are able to see the median value and outliers of the dataset.
+
+```{r NYC Marthon winner histogram}
 
 
 
@@ -126,6 +126,9 @@ marathon |>
     subtitle = 'Histogram of all divisions'
   ) +
   theme_minimal()
+```
+
+```{r NYC Marthon winner boxplot}
 
 marathon |>
   ggplot(aes(y=time_hrs)) +
@@ -140,7 +143,8 @@ marathon |>
 ```
 
 ### (B)
-When comparing the Men and Women divisions, we can see that the medians of the boxplots are more distinct. There is less variation of time in each boxplot as well. The Men division has a faster average marathon time than the woman division. 
+
+When comparing the Men and Women divisions, we can see that the medians of the boxplots are more distinct. There is less variation of time in each boxplot as well. The Men division has a faster average marathon time than the woman division.
 
 ```{r NYC Marthon winner boxplot of Men and Women Divisions}
 
@@ -158,8 +162,10 @@ marathon |>
   theme_minimal()
 
 ```
+
 ### (C)
-In themes, we are able to remove the legend and the x axis markers. The legend is removed because the boxplot title is more than sufficient for clearly representing the boxplot. The x-axis doesn't have graphical significance in portraying our message of the boxplot. 
+
+In themes, we are able to remove the legend and the x axis markers. The legend is removed because the boxplot title is more than sufficient for clearly representing the boxplot. The x-axis doesn't have graphical significance in portraying our message of the boxplot.
 
 ```{r NYC Marthon winner boxplot of Men and Women Divisions (improved data:ink ratio)}
 
@@ -185,7 +191,23 @@ marathon |>
 ```
 
 ### (D)
-```{r Time Series Marathon Finish Times}
+
+In this line plot, we are able to see the disparity in the two divisions. We are able to visually see a negative trend indicating that over time the two divisions are finishing the marathon faster.
+
+```{r Time-Series Marathon Finish Times}
+
+marathon |>
+  ggplot(aes(x= year, y= time_hrs, colour = division)) +
+  geom_line() +
+  geom_point(aes(shape= division), size= 2, alpha= 0.6) +
+  scale_color_manual(values = c("Men" = "skyblue", "Women" = "cornsilk4")) +
+  labs(
+    x= 'Year',
+    y= 'Finish Time (Hours)',
+    title = 'Marathon Finish Times', 
+    subtitle = 'Time-series of Men and Women division'
+  ) +
+  theme_minimal() 
 
 ```
 
@@ -206,4 +228,3 @@ marathon |>
 ```{r label-me-2}
 
 ```
-
