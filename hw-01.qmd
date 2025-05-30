@@ -25,6 +25,8 @@ library('scales')
 library('dplyr')
 library('ggthemes')
 
+library('openintro')
+
 # set theme for ggplot2
 ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
 
@@ -213,15 +215,161 @@ marathon |>
 
 ## 3 - US counties
 
-```{r label-me-2}
+```{r Import OpenIntro county dataset}
+data("county")
 
+county <- county |>
+  drop_na()
+
+glimpse(county)
+summary(county)
+```
+
+
+### (A)
+
+The below code works, but it does a poor job of explaining how the response "median_hh_income" relates to the variable "median_edu". The code adds the box plot and extends the x axis variables, thus not raising conflicts between the two plots. The y-axis is significantly stretched because the maximum values of pop2017 (max = 10163507) is greater than median_hh_income (max = 129588). All in all, the code works but the graph does not make sense.  
+
+``` {r Test randomly concstructed graph}
+
+ggplot(county) +
+  geom_point(aes(x = median_edu, y = median_hh_income)) +
+  geom_boxplot(aes(x = smoking_ban, y = pop2017))
+
+```
+
+### (B)
+Of the two figures below, the plot that best compares poverty levels to different median education levels is the 2nd figure. In the 2nd figure, we are able to distinguish the higher poverty levels per education level. Our choice is critical when picking how we want to facet our graphs. When faceting this will stretch our graphs in directions that may obscure our data, this inherently change how our graph's message is perceived.
+
+``` {r figure-1}
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty)) + 
+  facet_grid(median_edu ~ .)
+```
+
+``` {r figure 2}
+ggplot(county %>% filter(!is.na(median_edu))) + 
+  geom_point(aes(x = homeownership, y = poverty)) + 
+  facet_grid(. ~ median_edu)
+```
+
+### (C)
+
+```{r Plot A}
+county |>
+  ggplot(aes(x= homeownership, y= poverty)) +
+  geom_point() +
+  labs(
+    title= 'Plot A'
+  ) + 
+  theme_minimal()
+```
+
+```{r Plot B}
+county |>
+  ggplot(aes(x= homeownership, y= poverty)) +
+  geom_point() +
+  geom_smooth(se= FALSE) +
+  labs(
+    title= 'Plot B'
+  )
+```
+
+```{r Plot C}
+county |>
+  ggplot(aes(x= homeownership, y= poverty)) +
+  geom_point() +
+  geom_smooth(aes(colour=metro), se= FALSE) +
+  scale_color_manual(values = c("no" = "green", "yes" = "green")) +
+  labs(
+    title= 'Plot C'
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
+```{r Plot D}
+county |>
+  ggplot(aes(x= homeownership, y= poverty)) +
+  geom_smooth(aes(colour=metro), se= FALSE) +
+  geom_point() +
+  scale_color_manual(values = c("no" = "blue", "yes" = "blue")) +
+  labs(
+    title= 'Plot D'
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r Plot E}
+county |>
+  ggplot(aes(x = homeownership, y = poverty)) +
+  geom_point(aes(colour = metro)) +
+  geom_smooth(aes(linetype = metro), colour = "blue", se = FALSE) +
+  scale_linetype_manual(name = "metro ", values = c("no" = "solid", "yes" = "dashed")) +
+  labs(
+    title = 'Plot E'
+  ) +
+  theme_minimal()+ 
+  guides(
+    linetype = guide_legend(order = 1)
+  )
+```
+
+```{r Plot F}
+county |>
+  ggplot(aes(x= homeownership, y= poverty, colour=metro)) +
+  geom_point() +
+  geom_smooth(se= FALSE) +
+  labs(
+    title= 'Plot F'
+  ) +
+  theme_minimal()
+```
+
+```{r Plot G}
+county |>
+  ggplot(aes(x= homeownership, y= poverty)) +
+  geom_point(aes(colour= metro)) +
+  geom_smooth(se= FALSE) +
+  labs(
+    title= 'Plot F'
+  ) +
+  theme_minimal()
+```
+
+
+```{r Plot H}
+county |>
+  ggplot(aes(x= homeownership, y= poverty)) +
+  geom_point(aes(colour= metro)) +
+  labs(
+    title= 'Plot H'
+  ) +
+  theme_minimal()
 ```
 
 ## 4 - Rental apartments in SF
 
+### (A)
 ```{r label-me-2}
 
 ```
+
+### (A)
+
+
+```{r label-me-2}
+
+```
+
+### (C)
+```{r label-me-2}
+
+```
+
+### (D)
 
 ## 5 - Napoleon’s march.
 
