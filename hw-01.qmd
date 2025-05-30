@@ -352,27 +352,120 @@ county |>
 
 ## 4 - Rental apartments in SF
 
-### (A)
-```{r label-me-2}
-
+```{r import credit.csv}
+credit <- read.csv('data/credit.csv')
+glimpse(credit)
+summary(credit)
 ```
 
 ### (A)
 
+In all instances, if the person married or a student, there is a positive trend across all plots. The positive trends indicates the higher the income then the higher the credit card balance. 
 
-```{r label-me-2}
+Separately, it would be interesting to see the usage percentage based on the credit cards limit. I think this would tell a better story about debt availability and usage of married students and non-married non-students. 
 
+```{r Credit Card vs. Income Plots}
+
+credit |>
+  ggplot(aes(x= income, y= balance, colour = student)) +
+  geom_point(aes(shape = student), alpha= 0.6) +
+  geom_smooth(method= 'lm', se= FALSE) +
+  scale_color_manual(values = c("No" = "skyblue", "Yes" = "red4")) +
+  
+  scale_x_continuous(labels = label_dollar(suffix = 'K')) +
+  scale_y_continuous(labels = label_dollar()) +
+  
+  facet_grid(
+    student ~ married, 
+    labeller = labeller(
+      student = c('Yes' = 'Student: Yes', 'No' = 'Student: No'),
+      married = c('Yes' = 'Married:yes', 'No' = 'Married:No')
+    )
+  ) +
+  
+  labs(
+    x= 'Income',
+    y= 'Credit Card Balance'
+  ) +
+  
+  theme_minimal() +
+  theme(
+    legend.position = 'none', 
+    panel.border = element_rect(colour = 'black', fill= NA, linewidth = 1), 
+    strip.background = element_rect(colour = 'black', fill = 'gray', linewidth = 1)
+  )
+
+```
+
+### (B)
+
+Based on the plot, the predictors 'income', 'marriage', and 'student' are not strong predictors (when together) for figuring out the credit 'balance'. The trends are very similar, the y-intercepts are unique in their subplots, but they generally have the same linear regression line. 
+
+Based on the statistical summary below, we can see that the 'student' predictor shows statistical significance with a very small p value less the 0.05. The 'married' predictor has a p-value of 0.948 which indicates that it's statistically less significant. 'student' is a useful predictor.
+
+``` {r stats summary of credit.csv}
+
+model_income <- lm(balance ~ income, data = credit)
+summary(model_income)
+model_full <- lm(balance ~ income + student + married, data = credit)
+summary(model_full)
+
+anova(model_income, model_full)
 ```
 
 ### (C)
-```{r label-me-2}
+```{r Credit Utilization vs. Income}
+
+# Data Wrangling
+credit <- credit |> 
+  mutate(
+    credit_utilization = balance / limit
+  )
+
+# Credit Utilization vs. Income (incorporating student & marriage predictors)
+credit |>
+  ggplot(aes(x= income, y= credit_utilization, colour = student)) +
+  geom_point(aes(shape = student), alpha= 0.6) +
+  geom_smooth(method= 'lm', se= FALSE) +
+  scale_color_manual(values = c("No" = "skyblue", "Yes" = "red4")) +
+  
+  scale_x_continuous(labels = label_dollar(suffix = 'K')) +
+  scale_y_continuous(labels = percent) +
+  
+  facet_grid(
+    student ~ married, 
+    labeller = labeller(
+      student = c('Yes' = 'Student: Yes', 'No' = 'Student: No'),
+      married = c('Yes' = 'Married:yes', 'No' = 'Married:No')
+    )
+  ) +
+  
+  labs(
+    x= 'Income',
+    y= 'Credit Utilization'
+  ) +
+  
+  theme_minimal() +
+  theme(
+    legend.position = 'none', 
+    panel.border = element_rect(colour = 'black', fill= NA, linewidth = 1), 
+    strip.background = element_rect(colour = 'black', fill = 'gray', linewidth = 1)
+  )
 
 ```
 
 ### (D)
 
+Based on the plot from part (c), we see higher y-intercepts for credit card utilization of students('yes'). Another noticeable change, students that are married and non-married show a negative trend. This indicates that credit card utilization decreases as income increases for students. 
+
+
 ## 5 - Napoleon’s march.
 
-```{r label-me-2}
+```{r My Unique Napoleon’s march}
 
 ```
+
+
+### Citation List
+
+
