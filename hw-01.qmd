@@ -27,6 +27,7 @@ library('ggthemes')
 
 library('ggrepel')
 library('gridExtra')
+library('grid')
 
 library('openintro')
 
@@ -469,9 +470,7 @@ glimpse(napoleon)
 
 ```
 
-```{r My Unique Napoleon’s march}
-### Note: add directional shapes to indicate ingress and egress  
-
+```{r Napoleon’s march Troop plot}
 
 breaks <- c(100000, 200000, 300000) # Set scale breaks for 'survivor' var
 
@@ -493,52 +492,106 @@ plot_troops <- napoleon$troops |>
   # Add color to Troops by 'direction'
   scale_color_manual(
     name= "Direction", 
-    values = c("cornsilk3", "black"),
+    values = c("goldenrod", "black"),
     labels=c("Advance", "Retreat")
   ) +
-  guides(
-    size = guide_legend(order = 2),
-    colour = guide_legend(order = 1)
-  ) +
   theme_minimal()
-
-
-# Plot City names and points over Troops path
-plot_troops_cities <- plot_troops +
-  geom_point(
-    data = napoleon$cities
-  ) +
-  geom_text_repel(
-    data = napoleon$cities, 
-    aes(label = city)
-  ) +
-  theme_minimal()
-
-
-# Plot Temperature path plot
-plot_temp <- napoleon$temperatures |>
-  # create 
-  mutate(
-    label = paste0(temp, "° ", date)
-  ) |>
-  ggplot(aes(long, temp)) +
-  geom_path(color="grey", linewidth=1.5) +
-  geom_point(size=1) + 
-  geom_text_repel(
-    aes(label=label),
-    size=2.5
-  ) +
-  theme_minimal()
-
-# Combine the above plots
-grid.arrange(plot_troops_cities, plot_temp, nrow = 2)
+plot_troops
 
 ```
 
+
+```{r Napoleon’s march Troop-city plot}
+
+# Plot City names and points over Troops path
+plot_troops_cities <- plot_troops +
+  # Plot city names and points
+  geom_point(
+    data = napoleon$cities,
+    colour = 'orangered3'
+  ) +
+  geom_text_repel(
+    data = napoleon$cities, 
+    aes(label = city),
+    colour = 'orangered3',
+    family = "serif"
+  ) +
+  
+  # set X axis to match Temperature plot
+  coord_cartesian(xlim = c(24, 38)) +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Napoleon's March",
+    subtitle = "1812-13 invasion of Russia, Public Domain"
+  ) +
+  # disable Legend
+  guides(color = FALSE, size = FALSE) +
+  theme_minimal() +
+  # disable grids
+  theme(
+    text = element_text(family = "serif"),
+    axis.text = element_blank(),
+    panel.grid = element_blank()
+  )
+plot_troops_cities
+
+```
+
+
+```{r Napoleon’s Temperature plot}
+# Plot Temperature path plot
+plot_temp <- napoleon$temperatures |>
+  # create labels for points
+  mutate(
+    label = paste0(temp, "°, ", month, ".", day)
+  ) |>
+  # Temperature path based on Longitude
+  ggplot(aes(long, temp)) +
+  geom_path(color= "grey", linewidth= 1.5) +
+  geom_point(size= 1) +
+  geom_text_repel(aes(label= label), size = 2.5) +
+  
+  # set X axis similar to troop_city plot
+  coord_cartesian(xlim = c(24, 37)) +
+  scale_y_continuous(position = "right") +
+  labs(
+    x = NULL, 
+    y = "° Celsius",
+    caption = "Source: Charles Minard's 1869 chart"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(family = "serif"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_blank(), 
+    axis.ticks = element_blank(),
+    panel.border = element_blank()
+  )
+plot_temp
+
+```
+
+
+```{r Napoleon’s march Consolidate plots}
+# Combine the plots (heights are greater for troop_city)
+grid.arrange(plot_troops_cities, plot_temp, nrow = 2, heights = c(3.5, 1.2))
+# Add Border on Graphic
+grid.rect(width = .99, height = .99, gp = gpar(lwd = 2, col = "gray", fill = NA))
+```
+
+### Response
+
+The project is truly inspired by the plot from shakir-flash[1]. For my recreation of Charles Minard's 1869 chart, I separated each layer(or "plot") into three chunks. Each chunk is a layer that is later consolidated in the last chunk labeled "Consolidate plots". The first chunk creates the routes of the troop movements. The second chunk identifies labels and points for the cities, and this is overlay-ed with the first chunk "troop plot". The third chunk creates the plot that reflects the temperature (y-value) based on the longitude (x-value). The last chunk, "Consolidate plots", stacks the two graphs and showcases the final project. Styles for labeling and plotting was inspired by andrewheiss [2]. 
+
 ### Citation List
 
--   https://github.com/shakir-flash/Napoleons-March-Minard-Visualization
+1.  https://github.com/shakir-flash/Napoleons-March-Minard-Visualization
 
-This version of Napoleons March is 2 years old. The majority of the framework was received from this repository. Rather than copy/pasting the code, I used my own coding style to breakdown the plots. 
+This version of Napoleons March is 2 years old. The majority of my codes framework was received from this repository. Rather than copy/pasting the code, I used my own coding style to breakdown the plots into more intuitive sections.
 
+2.  https://github.com/andrewheiss/fancy-minard
 
+This versions of Napoleons March inspired me to change the formatting of the Temperature plot.
