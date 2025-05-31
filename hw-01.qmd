@@ -116,7 +116,7 @@ summary(marathon)
 
 ### (A)
 
-In the histogram, it's apparent that there are 2 major inflection points in the dataset, this difference us what separates the times between the Men and Women divisions. In the boxplot, we are able to see the median value and outliers of the dataset.
+In the histogram, it's apparent that there are 2 major inflection points in the dataset, this difference is what separates the times between the Men and Women divisions. In the boxplot, we are able to see the median value and outliers of the dataset.
 
 ```{r NYC Marthon winner histogram}
 
@@ -150,7 +150,7 @@ marathon |>
 
 ### (B)
 
-When comparing the Men and Women divisions, we can see that the medians of the boxplots are more distinct. There is less variation of time in each boxplot as well. The Men division has a faster average marathon time than the woman division.
+When comparing the Men and Women divisions, we can see that the medians of the boxplots are more distinct. There is less variation in time in each boxplot. The Men division has a faster average marathon time than the woman division.
 
 ```{r NYC Marthon winner boxplot of Men and Women Divisions}
 
@@ -198,7 +198,7 @@ marathon |>
 
 ### (D)
 
-In this line plot, we are able to see the disparity in the two divisions. We are able to visually see a negative trend indicating that over time the two divisions are finishing the marathon faster.
+In this line plot, we are able to see the disparity in the two divisions. We are able to visually see a negative trend,indicating that over time, the two divisions are finishing the marathon faster.
 
 ```{r Time-Series Marathon Finish Times}
 
@@ -231,7 +231,7 @@ summary(county)
 
 ### (A)
 
-The below code works, but it does a poor job of explaining how the response "median_hh_income" relates to the variable "median_edu". The code adds the box plot and extends the x axis variables, thus not raising conflicts between the two plots. The y-axis is significantly stretched because the maximum values of pop2017 (max = 10163507) is greater than median_hh_income (max = 129588). All in all, the code works but the graph does not make sense.
+The below code works, but it does a poor job of explaining how the response "median_hh_income" relates to the variable "median_edu". The code adds the box plot and extends the x-axis variables, thus not raising conflicts between the two plots. The y-axis is significantly stretched because the maximum values of pop2017 (max = 10163507) are greater than median_hh_income (max = 129588). All in all, the code works, but the graph does not make sense.
 
 ```{r Test randomly concstructed graph}
 
@@ -243,7 +243,7 @@ ggplot(county) +
 
 ### (B)
 
-Of the two figures below, the plot that best compares poverty levels to different median education levels is the 2nd figure. In the 2nd figure, we are able to distinguish the higher poverty levels per education level. Our choice is critical when picking how we want to facet our graphs. When faceting this will stretch our graphs in directions that may obscure our data, this inherently change how our graph's message is perceived.
+Of the two figures below, the 2nd figure best compares poverty levels to different median education levels. In the 2nd figure, we are able to distinguish the higher poverty levels per education level. Our choice is critical when picking how we want to facet our graphs. When faceting, this will stretch our graphs in directions that may obscure our data, this will inherently change how our graph's message is perceived.
 
 ```{r figure-1}
 ggplot(county %>% filter(!is.na(median_edu))) + 
@@ -362,9 +362,7 @@ summary(credit)
 
 ### (A)
 
-In all instances, if the person married or a student, there is a positive trend across all plots. The positive trends indicates the higher the income then the higher the credit card balance.
-
-Separately, it would be interesting to see the usage percentage based on the credit cards limit. I think this would tell a better story about debt availability and usage of married students and non-married non-students.
+In all instances, if the person is married or a student, there is a positive trend across all plots. The positive trends indicate the higher the income then the higher the credit card balance.
 
 ```{r Credit Card vs. Income Plots}
 
@@ -401,7 +399,7 @@ credit |>
 
 ### (B)
 
-Based on the plot, the predictors 'income', 'marriage', and 'student' are not strong predictors (when together) for figuring out the credit 'balance'. The trends are very similar, the y-intercepts are unique in their subplots, but they generally have the same linear regression line.
+Based on the plot, the predictors 'income', 'marriage', and 'student' are not strong predictors for figuring out the credit 'balance'. The trends are very similar, the y-intercepts are unique in their subplots, but they generally have the same linear regression line.
 
 Based on the statistical summary below, we can see that the 'student' predictor shows statistical significance with a very small p value less the 0.05. The 'married' predictor has a p-value of 0.948 which indicates that it's statistically less significant. 'student' is a useful predictor.
 
@@ -459,7 +457,7 @@ credit |>
 
 ### (D)
 
-Based on the plot from part (c), we see higher y-intercepts for credit card utilization of students('yes'). Another noticeable change, students that are married and non-married show a negative trend. This indicates that credit card utilization decreases as income increases for students.
+Based on the plot from part (c), we see higher y-intercepts for credit card utilization of students('yes'). Another noticeable change is married and non-married students show a negative trend. This indicates that credit card utilization decreases as income increases for students.
 
 ## 5 - Napoleon’s march.
 
@@ -500,7 +498,6 @@ plot_troops
 
 ```
 
-
 ```{r Napoleon’s march Troop-city plot}
 
 # Plot City names and points over Troops path
@@ -538,7 +535,6 @@ plot_troops_cities
 
 ```
 
-
 ```{r Napoleon’s Temperature plot}
 # Plot Temperature path plot
 plot_temp <- napoleon$temperatures |>
@@ -574,7 +570,6 @@ plot_temp
 
 ```
 
-
 ```{r Napoleon’s march Consolidate plots}
 # Combine the plots (heights are greater for troop_city)
 grid.arrange(plot_troops_cities, plot_temp, nrow = 2, heights = c(3.5, 1.2))
@@ -584,7 +579,7 @@ grid.rect(width = .99, height = .99, gp = gpar(lwd = 2, col = "gray", fill = NA)
 
 ### Response
 
-The project is truly inspired by the plot from shakir-flash[1]. For my recreation of Charles Minard's 1869 chart, I separated each layer(or "plot") into three chunks. Each chunk is a layer that is later consolidated in the last chunk labeled "Consolidate plots". The first chunk creates the routes of the troop movements. The second chunk identifies labels and points for the cities, and this is overlay-ed with the first chunk "troop plot". The third chunk creates the plot that reflects the temperature (y-value) based on the longitude (x-value). The last chunk, "Consolidate plots", stacks the two graphs and showcases the final project. Styles for labeling and plotting was inspired by andrewheiss [2]. 
+The project is truly inspired by the plot from shakir-flash\[1\]. For my recreation of Charles Minard's 1869 chart, I separated each layer(or "plot") into three chunks. Each chunk is a layer that is later consolidated in the last chunk labeled "Consolidate plots". The first chunk creates the routes of the troop movements. The second chunk identifies labels and points for the cities, and this is overlaid with the first chunk "troop plot". The third chunk creates the plot that reflects the temperature (y-value) based on the longitude (x-value). The last chunk, "Consolidate plots", stacks the two graphs and showcases the final project. Styles for labeling and plotting were inspired by andrewheiss \[2\].
 
 ### Citation List
 
