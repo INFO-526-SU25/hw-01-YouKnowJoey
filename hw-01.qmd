@@ -11,25 +11,10 @@ if (!require("pacman"))
   install.packages("pacman")
 
 # use this line for installing/loading
-# pacman::p_load() 
-
-if (!require(gridExtra)) {install.packages("gridExtra"); require(gridExtra)}
-    library(gridExtra)
+pacman::p_load(tidyverse, lubridate, glue, scales, dplyr, ggthemes, ggrepel, grid, gridExtra, openintro)
 
 devtools::install_github("tidyverse/dsbox")
 
-library('tidyverse')
-library('lubridate')
-library('glue')
-library('scales')
-library('dplyr')
-library('ggthemes')
-
-library('ggrepel')
-library('gridExtra')
-library('grid')
-
-library('openintro')
 
 # set theme for ggplot2
 ggplot2::theme_set(ggplot2::theme_minimal(base_size = 14))
