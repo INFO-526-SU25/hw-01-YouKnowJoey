@@ -1,7 +1,10 @@
 ---
 title: "HW 01"
 author: "Joey Garcia"
-format: html
+format: 
+  html:
+    embed-resources: true
+toc: true
 ---
 
 ## 0 - Setup
